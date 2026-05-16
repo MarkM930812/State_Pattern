@@ -1,0 +1,308 @@
+\documentclass[aspectratio=169]{beamer}
+
+\usetheme{Madrid}
+\usecolortheme{default}
+\setbeamertemplate{navigation symbols}{}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,calc}
+
+\definecolor{withoutaccent}{RGB}{170,70,70}
+\definecolor{withaccent}{RGB}{34,120,92}
+\definecolor{flowaccent}{RGB}{53,101,164}
+
+\tikzset{
+  basebox/.style={
+    draw,
+    rounded corners=2pt,
+    align=center,
+    font=\scriptsize,
+    inner sep=3pt,
+    minimum height=8mm
+  },
+  endpointbox/.style={basebox, fill=gray!10, draw=gray!60},
+  servicebox/.style={basebox, fill=withoutaccent!18, draw=withoutaccent!80, text width=24mm},
+  factorybox/.style={basebox, fill=flowaccent!15, draw=flowaccent!80, text width=22mm},
+  statebox/.style={basebox, fill=withaccent!16, draw=withaccent!75, text width=19mm},
+  statepill/.style={basebox, fill=withaccent!12, draw=withaccent!70, minimum width=20mm},
+  problembox/.style={basebox, fill=orange!18, draw=orange!80, text width=21mm},
+  decisionbox/.style={draw, diamond, aspect=2.1, fill=orange!15, draw=orange!80, align=center, font=\scriptsize, inner sep=1.6pt},
+  transition/.style={-{Latex[length=2mm,width=1.4mm]}, thick},
+  softarrow/.style={-{Latex[length=1.7mm,width=1.2mm]}, thick, draw=gray!75},
+  note/.style={font=\scriptsize, text=black!75}
+}
+
+\title{State Pattern mit Spring Boot}
+\subtitle{Retro Kit Order Workflow als Bestellsystem}
+\author{Präsentationsgrundlage}
+\institute{IT-Kolleg Projektarbeit}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Ausgangsproblem}
+  \begin{itemize}
+    \item Eine Bestellung durchläuft mehrere fachliche Zustände.
+    \item Im \texttt{without-pattern}-Branch liegt die Logik zentral in \texttt{KitOrderService}.
+    \item Aktionen wie Bezahlen, Verpacken oder Versenden werden dort mit Fallunterscheidungen geprüft.
+    \item Mit jedem neuen Status wächst die Service-Klasse weiter.
+  \end{itemize}
+  \vspace{0.4cm}
+  \textbf{Zentrale Frage:} Wie kapseln wir zustandsabhängiges Verhalten sauber und erweiterbar?
+\end{frame}
+
+\begin{frame}{Projektüberblick}
+  \small
+  \begin{itemize}
+    \item Eigenständiges Spring-Boot-Projekt im Ordner \texttt{state\_pattern\_kit\_orders}
+    \item Java 21, Spring Boot 3.3.5, Maven, Spring Web, Spring Data JPA, H2
+    \item Fachdomäne: Verwaltung von Retro-Fußballtrikot-Bestellungen
+    \item Branches:
+    \begin{itemize}
+      \item \texttt{without-pattern}: funktionierende Ausgangslösung ohne gezielten Pattern-Einsatz
+      \item \texttt{with-pattern}: refaktorierte State-Pattern-Lösung
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Kurze Erklärung des State Patterns}
+  \begin{block}{Grundidee}
+    Das Verhalten eines Objekts hängt vom aktuellen Zustand ab. Statt großer \texttt{if}- oder \texttt{switch}-Blöcke wird jeder Zustand als eigene Klasse modelliert.
+  \end{block}
+  \begin{itemize}
+    \item Gemeinsames Interface für zustandsabhängige Aktionen
+    \item Eigene Klasse pro Status
+    \item Übergangslogik liegt dort, wo sie fachlich hingehört
+    \item Der zentrale Service orchestriert nur noch
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Fachlicher Bestellablauf}
+  \centering
+  \begin{tikzpicture}[node distance=10mm and 12mm, scale=0.92, transform shape]
+    \node[statepill] (created) {\texttt{CREATED}};
+    \node[statepill, right=of created] (paid) {\texttt{PAID}};
+    \node[statepill, right=of paid] (packed) {\texttt{PACKED}};
+    \node[statepill, right=of packed] (shipped) {\texttt{SHIPPED}};
+    \node[problembox, below=12mm of paid] (cancelled) {\texttt{CANCELLED}};
+    \node[statepill, below=12mm of shipped] (returned) {\texttt{RETURNED}};
+
+    \draw[transition, draw=withaccent] (created) -- node[above, note] {bezahlen} (paid);
+    \draw[transition, draw=withaccent] (paid) -- node[above, note] {verpacken} (packed);
+    \draw[transition, draw=withaccent] (packed) -- node[above, note] {versenden} (shipped);
+    \draw[transition, draw=withoutaccent] (created) |- node[pos=0.3, left, note] {stornieren} (cancelled.west);
+    \draw[transition, draw=withoutaccent] (paid) -- (cancelled);
+    \draw[transition, draw=withoutaccent] (packed) |- (cancelled.east);
+    \draw[transition, draw=flowaccent] (shipped) -- node[right, note] {retournieren} (returned);
+  \end{tikzpicture}
+  \vspace{0.25cm}
+  \begin{block}{Sinnvolle Erweiterung}
+    Der Zustand \texttt{RETURNED} eignet sich gut, um den Unterschied zwischen \texttt{without-pattern} und \texttt{with-pattern} zu demonstrieren.
+  \end{block}
+\end{frame}
+
+\begin{frame}{without-pattern: Zentrale Logik}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.58\textwidth}
+    \centering
+    \begin{tikzpicture}[node distance=8mm and 8mm, scale=0.75, transform shape]
+      \node[endpointbox] (controller) {Controller};
+      \node[servicebox, right=11mm of controller] (service) {\texttt{KitOrderService}\\alle Regeln zentral};
+      \node[decisionbox, right=12mm of service] (decision) {Status\\prüfen?};
+
+      \node[problembox, above right=4mm and 8mm of decision] (pay) {if CREATED\\$\Rightarrow$ pay};
+      \node[problembox, right=9mm of decision] (pack) {if PAID\\$\Rightarrow$ pack};
+      \node[problembox, below right=4mm and 8mm of decision] (ship) {if PACKED\\$\Rightarrow$ ship};
+      \node[problembox, below=11mm of decision] (cancel) {if CREATED/PAID/PACKED\\$\Rightarrow$ cancel};
+      \node[problembox, below=11mm of cancel] (return) {if SHIPPED\\$\Rightarrow$ return};
+
+      \draw[softarrow] (controller) -- (service);
+      \draw[transition, draw=withoutaccent] (service) -- (decision);
+      \draw[transition, draw=withoutaccent] (decision) -- (pay);
+      \draw[transition, draw=withoutaccent] (decision) -- (pack);
+      \draw[transition, draw=withoutaccent] (decision) -- (ship);
+      \draw[transition, draw=withoutaccent] (decision) -- (cancel);
+      \draw[transition, draw=withoutaccent] (cancel) -- (return);
+    \end{tikzpicture}
+
+    \column{0.42\textwidth}
+    \small
+    \begin{itemize}
+      \item Ein Service kennt alle Status und alle Sonderfälle.
+      \item Neue Übergänge landen wieder in derselben Klasse.
+      \item \textbf{Engpass:} jede Erweiterung vergrößert den zentralen Entscheidungsknoten.
+      \item Das sieht in der Grafik wie ein Bottleneck aus und ist genau das Problem dieser Variante.
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{with-pattern: Verteilte Architektur}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.58\textwidth}
+    \centering
+    \begin{tikzpicture}[node distance=8mm and 8mm, scale=0.78, transform shape]
+      \node[endpointbox] (controller) {Controller};
+      \node[endpointbox, right=9mm of controller] (service) {\texttt{KitOrder}\\\texttt{Service}\\orchestriert};
+      \node[factorybox, right=10mm of service] (factory) {\texttt{OrderState}\\\texttt{Factory}};
+
+      \node[statebox, above right=3mm and 10mm of factory] (created) {Created\\State};
+      \node[statebox, right=12mm of factory] (paid) {Paid\\State};
+      \node[statebox, below right=3mm and 10mm of factory] (packed) {Packed\\State};
+      \node[statebox, below=10mm of factory] (cancelled) {Cancelled\\State};
+      \node[statebox, below=12mm of paid] (shipped) {Shipped\\State};
+      \node[statebox, below=12mm of packed] (returned) {Returned\\State};
+
+      \draw[softarrow] (controller) -- (service);
+      \draw[transition, draw=flowaccent] (service) -- (factory);
+      \draw[transition, draw=withaccent] (factory) -- (created);
+      \draw[transition, draw=withaccent] (factory) -- (paid);
+      \draw[transition, draw=withaccent] (factory) -- (packed);
+      \draw[transition, draw=withaccent] (factory) -- (cancelled);
+      \draw[transition, draw=withaccent] (factory) -- (shipped);
+      \draw[transition, draw=withaccent] (factory) -- (returned);
+    \end{tikzpicture}
+
+    \column{0.42\textwidth}
+    \small
+    \begin{itemize}
+      \item Der Service entscheidet nicht mehr alles selbst.
+      \item Die Factory liefert die passende Zustandsklasse.
+      \item Fachregeln sind auf mehrere klar benannte Klassen verteilt.
+      \item \textbf{Vorteil:} neue Zustände werden lokal ergänzt statt zentral gestaut.
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{REST-Endpunkte}
+  \small
+  \begin{itemize}
+    \item \texttt{POST /api/orders}
+    \item \texttt{GET /api/orders}
+    \item \texttt{GET /api/orders/\{orderId\}}
+    \item \texttt{GET /api/orders/status/\{status\}}
+    \item \texttt{POST /api/orders/\{orderId\}/pay}
+    \item \texttt{POST /api/orders/\{orderId\}/pack}
+    \item \texttt{POST /api/orders/\{orderId\}/ship}
+    \item \texttt{POST /api/orders/\{orderId\}/cancel}
+    \item \texttt{POST /api/orders/\{orderId\}/return}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Tests und Qualität}
+  \begin{itemize}
+    \item Mehr als 6 Tests sind vorhanden
+    \item Integrationstests prüfen API und Statuswechsel
+    \item Unit-Tests prüfen im \texttt{with-pattern}-Branch die Zustandsklassen direkt
+    \item Validiert wurden beide Branches mit \texttt{./mvnw test}
+  \end{itemize}
+  \vspace{0.3cm}
+  \begin{block}{Beobachtung}
+    Im \texttt{with-pattern}-Branch werden Tests fachlich klarer, weil Übergänge gezielt auf einzelnen State-Klassen überprüft werden können.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Direkter Vergleich}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+    \textbf{without-pattern}
+    \vspace{0.15cm}
+
+    \centering
+    \begin{tikzpicture}[node distance=7mm and 7mm, scale=0.84, transform shape]
+      \node[servicebox] (servicea) {große\\Service-Klasse};
+      \node[problembox, above right=1mm and 10mm of servicea] (a1) {pay};
+      \node[problembox, right=10mm of servicea] (a2) {pack};
+      \node[problembox, below right=1mm and 10mm of servicea] (a3) {ship};
+      \node[problembox, below=8mm of servicea] (a4) {cancel};
+      \draw[transition, draw=withoutaccent] (servicea) -- (a1);
+      \draw[transition, draw=withoutaccent] (servicea) -- (a2);
+      \draw[transition, draw=withoutaccent] (servicea) -- (a3);
+      \draw[transition, draw=withoutaccent] (servicea) -- (a4);
+    \end{tikzpicture}
+
+    \small
+    \begin{itemize}
+      \item Engpass in einer Klasse
+      \item Änderung an zentralem Code
+      \item schlechtere grafische Struktur
+    \end{itemize}
+
+    \column{0.48\textwidth}
+    \textbf{with-pattern}
+    \vspace{0.15cm}
+
+    \centering
+    \begin{tikzpicture}[node distance=7mm and 7mm, scale=0.84, transform shape]
+      \node[endpointbox] (serviceb) {Service};
+      \node[factorybox, right=10mm of serviceb] (factoryb) {Factory};
+      \node[statebox, above right=1mm and 10mm of factoryb] (b1) {Created};
+      \node[statebox, right=10mm of factoryb] (b2) {Paid};
+      \node[statebox, below right=1mm and 10mm of factoryb] (b3) {Packed};
+      \node[statebox, below=8mm of factoryb] (b4) {Shipped/\\Returned};
+      \draw[transition, draw=flowaccent] (serviceb) -- (factoryb);
+      \draw[transition, draw=withaccent] (factoryb) -- (b1);
+      \draw[transition, draw=withaccent] (factoryb) -- (b2);
+      \draw[transition, draw=withaccent] (factoryb) -- (b3);
+      \draw[transition, draw=withaccent] (factoryb) -- (b4);
+    \end{tikzpicture}
+
+    \small
+    \begin{itemize}
+      \item verteilte Verantwortung
+      \item lokale Erweiterungen
+      \item klarere Test- und Code-Struktur
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Rolle der generativen KI}
+  \begin{itemize}
+    \item KI half beim Verstehen des State Patterns.
+    \item KI lieferte Vorschläge für Refactoring-Schritte und Testideen.
+    \item KI war hilfreich für die Dokumentation des Branch-Vergleichs.
+  \end{itemize}
+  \vspace{0.3cm}
+  \begin{block}{Wichtig}
+    Die Vorschläge wurden fachlich geprüft und angepasst, besonders bei Zustandsübergängen, API-Design, Fehlerbehandlung und Testabdeckung.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Demo-Ablauf in der Präsentation}
+  \small
+  \begin{enumerate}
+    \item \texttt{without-pattern}-Branch zeigen
+    \item zentrale Logik in \texttt{KitOrderService} kurz erklären
+    \item auf \texttt{with-pattern} wechseln
+    \item \texttt{OrderStateFactory} und die State-Klassen zeigen
+    \item Request-Folge demonstrieren:
+    \begin{itemize}
+      \item Bestellung anlegen
+      \item bezahlen
+      \item verpacken
+      \item versenden
+      \item retournieren
+    \end{itemize}
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Fazit}
+  \begin{itemize}
+    \item Das State Pattern ist sinnvoll für Objekte mit klaren Lebenszyklen.
+    \item Im Bestellsystem reduziert es zentrale Fallunterscheidungen deutlich.
+    \item Die Erweiterung \texttt{RETURNED} lässt sich im \texttt{with-pattern}-Branch sauberer umsetzen.
+    \item Nachteil: mehr Klassen und etwas höherer Strukturaufwand.
+  \end{itemize}
+  \vspace{0.5cm}
+  \centering
+  \Large Fragen?
+\end{frame}
+
+\end{document}

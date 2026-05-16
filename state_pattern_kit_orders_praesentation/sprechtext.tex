@@ -1,0 +1,57 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper,margin=2.3cm]{geometry}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\title{Sprechtext zur Präsentation\\State Pattern mit Spring Boot}
+\author{Retro Kit Order Workflow}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Folie 1: Titel}
+Heute präsentieren wir unser Spring-Boot-Projekt \glqq Retro Kit Order Workflow\grqq. Das Thema unserer Arbeit ist das State Pattern an einem Bestellsystem. Dabei vergleichen wir bewusst zwei Branches: eine Ausgangslösung ohne gezielten Pattern-Einsatz und eine refaktorierte Lösung mit State Pattern.
+
+\section*{Folie 2: Ausgangsproblem}
+Eine Bestellung durchläuft mehrere fachliche Zustände. Typische Beispiele sind erstellt, bezahlt, verpackt, versendet oder storniert. Wenn man diese Logik direkt in einer Service-Klasse umsetzt, entstehen schnell viele Fallunterscheidungen. Genau das ist unser Problem im Branch \texttt{without-pattern}: Die Zustandslogik liegt zentral im \texttt{KitOrderService} und wird dadurch mit jeder neuen Anforderung unübersichtlicher.
+
+\section*{Folie 3: Projektüberblick}
+Unser Projekt ist ein eigenständiges Maven- und Spring-Boot-Projekt mit Java 21, Spring Web, Spring Data JPA und einer H2-Datenbank. Fachlich geht es um Retro-Fußballtrikot-Bestellungen. Besonders wichtig ist die Branch-Struktur: Im Branch \texttt{without-pattern} liegt die funktionierende Ausgangslösung, im Branch \texttt{with-pattern} die refaktorierte Lösung mit klarer Pattern-Struktur.
+
+\section*{Folie 4: Erklärung des State Patterns}
+Das State Pattern bedeutet, dass das Verhalten eines Objekts vom aktuellen Zustand abhängt und dieser Zustand nicht mit großen \texttt{if}-Blöcken, sondern mit eigenen Klassen modelliert wird. Statt dass eine einzige Service-Klasse alle Regeln kennt, kapselt jede Zustandsklasse die erlaubten Übergänge für genau einen Status.
+
+\section*{Folie 5: Fachlicher Bestellablauf}
+Unsere Bestellung startet im Zustand \texttt{CREATED}. Danach kann sie bezahlt werden, also in \texttt{PAID} wechseln. Danach folgt \texttt{PACKED}, dann \texttt{SHIPPED}. Zusätzlich kann eine Bestellung in mehreren frühen Phasen storniert werden. Als sinnvolle Erweiterung haben wir \texttt{RETURNED} eingebaut. Gerade dieser zusätzliche Zustand zeigt sehr gut, warum das State Pattern die Erweiterbarkeit verbessert.
+
+\section*{Folie 6: without-pattern}
+Im \texttt{without-pattern}-Branch steckt die Logik noch zentral im \texttt{KitOrderService}. Dort wird direkt geprüft, ob der aktuelle Status passt. Zum Beispiel darf man nur eine \texttt{CREATED}-Bestellung bezahlen oder nur eine \texttt{PACKED}-Bestellung versenden. Das funktioniert zwar, aber die Klasse wird schnell groß, stark gekoppelt und schwerer wartbar.
+
+\section*{Folie 7: with-pattern}
+Im \texttt{with-pattern}-Branch haben wir die Zustandslogik in einzelne Klassen ausgelagert. Es gibt ein gemeinsames Interface \texttt{OrderState}, eine \texttt{OrderStateFactory} und konkrete Klassen wie \texttt{CreatedOrderState}, \texttt{PaidOrderState} oder \texttt{ShippedOrderState}. Der \texttt{KitOrderService} orchestriert dann nur noch und delegiert die eigentliche Regel an den passenden State.
+
+\section*{Folie 8: REST-Endpunkte}
+Die Anwendung erfüllt die Anforderungen des Arbeitsblatts deutlich. Es gibt mehr als drei REST-Endpunkte. Besonders wichtig sind die Endpunkte zum Anlegen der Bestellung, zum Anzeigen nach ID oder Status und zu den Statuswechseln wie Bezahlen, Verpacken, Versenden, Stornieren und Retournieren.
+
+\section*{Folie 9: Tests und Qualität}
+Wir haben sowohl Integrations- als auch Unit-Tests verwendet. Die Integrationstests prüfen, ob die REST-API und die Statuswechsel korrekt funktionieren. Im \texttt{with-pattern}-Branch kommen zusätzlich gezielte Unit-Tests für die State-Klassen dazu. Das ist ein Vorteil des Patterns, weil die Fachregeln isolierter getestet werden können.
+
+\section*{Folie 10: Vergleich der Branches}
+Der wichtigste Unterschied ist die Verantwortungstrennung. Ohne Pattern sammelt eine zentrale Service-Klasse immer mehr Wissen über alle Zustände. Mit Pattern wandert dieses Wissen in die jeweiligen Zustandsklassen. Das macht die Lösung klarer, testbarer und vor allem leichter erweiterbar. Der Nachteil ist, dass mehr Klassen entstehen und die Struktur zunächst etwas aufwendiger wirkt.
+
+\section*{Folie 11: Rolle der KI}
+Generative KI hat uns vor allem in drei Punkten geholfen: beim Verstehen des State Patterns, beim Erstellen eines Refactoring-Plans und beim Ableiten sinnvoller Testfälle. Gleichzeitig mussten wir die Vorschläge prüfen, weil manche Antworten zu allgemein oder für Spring Boot nicht konkret genug waren. Die endgültigen fachlichen Entscheidungen haben wir selbst getroffen.
+
+\section*{Folie 12: Demo-Ablauf}
+In der Live-Demo würden wir zuerst den \texttt{without-pattern}-Branch zeigen und kurz erklären, wo die Fallunterscheidungen liegen. Danach wechseln wir auf \texttt{with-pattern}, zeigen die State-Klassen und demonstrieren einen kompletten Ablauf von \texttt{CREATED} bis \texttt{SHIPPED} oder \texttt{RETURNED}.
+
+\section*{Folie 13: Fazit}
+Unser Fazit ist: Das State Pattern lohnt sich überall dort, wo Objekte einen klaren Lebenszyklus mit zustandsabhängigem Verhalten besitzen. Für dieses Bestellsystem ist es gut geeignet, weil die Bestellung nicht nur Daten speichert, sondern sich je nach Zustand fachlich unterschiedlich verhält. Für sehr kleine Systeme wäre der zusätzliche Strukturaufwand möglicherweise noch nicht nötig.
+
+\end{document}
