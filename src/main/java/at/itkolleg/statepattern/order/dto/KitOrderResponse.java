@@ -6,6 +6,9 @@ import java.time.LocalDateTime;
 import at.itkolleg.statepattern.order.model.KitOrder;
 import at.itkolleg.statepattern.order.model.OrderStatus;
 
+/**
+ * Response-DTO der REST-API.
+ */
 public record KitOrderResponse(
         Long id,
         String customerName,
@@ -29,6 +32,7 @@ public record KitOrderResponse(
 ) {
 
     public static KitOrderResponse from(KitOrder order) {
+        // Einheitliches Mapping hält die REST-Antwort stabil, auch wenn sich die Entity intern weiterentwickelt.
         return new KitOrderResponse(
                 order.getId(),
                 order.getCustomerName(),

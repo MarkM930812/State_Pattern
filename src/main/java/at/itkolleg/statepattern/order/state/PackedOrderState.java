@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 import at.itkolleg.statepattern.order.model.KitOrder;
 import at.itkolleg.statepattern.order.model.OrderStatus;
 
+/**
+ * State für verpackte Bestellungen.
+ */
 @Component
 public class PackedOrderState extends AbstractOrderState {
 

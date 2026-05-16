@@ -16,6 +16,10 @@ import at.itkolleg.statepattern.order.state.PackedOrderState;
 import at.itkolleg.statepattern.order.state.PaidOrderState;
 import at.itkolleg.statepattern.order.state.ShippedOrderState;
 
+/**
+ * Unit-Tests für die konkreten Zustandsklassen.
+ * Diese Tests sind ein zentraler Vorteil der Pattern-Lösung, weil Übergänge isoliert geprüft werden können.
+ */
 class OrderStateUnitTest {
 
     private final CreatedOrderState createdOrderState = new CreatedOrderState();

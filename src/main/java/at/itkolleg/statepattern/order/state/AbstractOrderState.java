@@ -3,6 +3,10 @@ package at.itkolleg.statepattern.order.state;
 import at.itkolleg.statepattern.order.exception.InvalidOrderStateTransitionException;
 import at.itkolleg.statepattern.order.model.KitOrder;
 
+/**
+ * Basisklasse mit Standardverhalten für nicht erlaubte Aktionen.
+ * Konkrete States überschreiben nur die Übergänge, die sie wirklich unterstützen.
+ */
 abstract class AbstractOrderState implements OrderState {
 
     @Override

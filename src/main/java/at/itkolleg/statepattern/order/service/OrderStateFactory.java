@@ -10,12 +10,16 @@ import org.springframework.stereotype.Component;
 import at.itkolleg.statepattern.order.model.OrderStatus;
 import at.itkolleg.statepattern.order.state.OrderState;
 
+/**
+ * Bildet jeden Status auf genau eine State-Implementierung ab.
+ */
 @Component
 public class OrderStateFactory {
 
     private final Map<OrderStatus, OrderState> statesByStatus;
 
     public OrderStateFactory(List<OrderState> states) {
+        // Spring injiziert alle OrderState-Beans; daraus bauen wir eine unveränderliche Lookup-Map.
         this.statesByStatus = states.stream()
                 .collect(Collectors.toUnmodifiableMap(OrderState::supports, Function.identity()));
     }

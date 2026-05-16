@@ -24,6 +24,9 @@ import at.itkolleg.statepattern.order.dto.ReasonRequest;
 import at.itkolleg.statepattern.order.dto.ShipOrderRequest;
 import at.itkolleg.statepattern.order.repository.KitOrderRepository;
 
+/**
+ * Integrationstests für die REST-Endpunkte des with-pattern-Branches.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 class KitOrderControllerIntegrationTest {
@@ -38,6 +41,7 @@ class KitOrderControllerIntegrationTest {
 
     @BeforeEach
     void setUp() {
+                // Jeder Test startet mit einer leeren In-Memory-Datenbank.
         kitOrderRepository.deleteAll();
     }
 

@@ -6,6 +6,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 
+/**
+ * Request-DTO für das Anlegen einer Bestellung.
+ */
 public record CreateKitOrderRequest(
         @NotBlank(message = "customerName darf nicht leer sein")
         String customerName,

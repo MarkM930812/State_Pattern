@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+/**
+ * Globale Fehlerbehandlung für die REST-API.
+ */
 @RestControllerAdvice
 public class RestExceptionHandler {
 
@@ -48,6 +51,7 @@ public class RestExceptionHandler {
                                                            String message,
                                                            List<String> details,
                                                            String path) {
+        // Zentrale Fabrikmethode für konsistente Fehlerantworten.
         return ResponseEntity.status(status).body(new ApiErrorResponse(
                 LocalDateTime.now(),
                 status.value(),

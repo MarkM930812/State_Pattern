@@ -17,6 +17,10 @@ import at.itkolleg.statepattern.order.model.OrderStatus;
 import at.itkolleg.statepattern.order.repository.KitOrderRepository;
 import at.itkolleg.statepattern.order.state.OrderState;
 
+/**
+ * Zentrale Orchestrierung im with-pattern-Branch.
+ * Anders als im without-pattern-Branch delegiert der Service Statusaktionen an State-Objekte.
+ */
 @Service
 @Transactional
 public class KitOrderService {
@@ -68,6 +72,7 @@ public class KitOrderService {
 
     public KitOrderResponse pay(Long orderId) {
         KitOrder order = findOrder(orderId);
+        // Der Service wählt nur den aktuellen State und delegiert die Fachregel weiter.
         currentState(order).pay(order);
         return KitOrderResponse.from(kitOrderRepository.save(order));
     }

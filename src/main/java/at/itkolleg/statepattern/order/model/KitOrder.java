@@ -14,6 +14,10 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
+/**
+ * Persistentes Datenmodell für eine Bestellung.
+ * Neben den Kundendaten werden auch Status und Zeitstempel der Übergänge gespeichert.
+ */
 @Entity
 @Table(name = "kit_orders")
 public class KitOrder {
@@ -74,6 +78,7 @@ public class KitOrder {
 
     @PrePersist
     public void onCreate() {
+        // Beim ersten Speichern werden technische Zeitstempel gesetzt.
         LocalDateTime now = LocalDateTime.now();
         createdAt = now;
         updatedAt = now;
