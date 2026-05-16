@@ -2,7 +2,6 @@ package at.itkolleg.statepattern.order.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -12,20 +11,22 @@ import at.itkolleg.statepattern.order.dto.CreateKitOrderRequest;
 import at.itkolleg.statepattern.order.dto.KitOrderResponse;
 import at.itkolleg.statepattern.order.dto.ReasonRequest;
 import at.itkolleg.statepattern.order.dto.ShipOrderRequest;
-import at.itkolleg.statepattern.order.exception.InvalidOrderStateTransitionException;
 import at.itkolleg.statepattern.order.exception.OrderNotFoundException;
 import at.itkolleg.statepattern.order.model.KitOrder;
 import at.itkolleg.statepattern.order.model.OrderStatus;
 import at.itkolleg.statepattern.order.repository.KitOrderRepository;
+import at.itkolleg.statepattern.order.state.OrderState;
 
 @Service
 @Transactional
 public class KitOrderService {
 
     private final KitOrderRepository kitOrderRepository;
+    private final OrderStateFactory orderStateFactory;
 
-    public KitOrderService(KitOrderRepository kitOrderRepository) {
+    public KitOrderService(KitOrderRepository kitOrderRepository, OrderStateFactory orderStateFactory) {
         this.kitOrderRepository = kitOrderRepository;
+        this.orderStateFactory = orderStateFactory;
     }
 
     @Transactional(readOnly = true)
@@ -67,63 +68,31 @@ public class KitOrderService {
 
     public KitOrderResponse pay(Long orderId) {
         KitOrder order = findOrder(orderId);
-        if (order.getStatus() != OrderStatus.CREATED) {
-            throw new InvalidOrderStateTransitionException(order.getId(), order.getStatus(), "bezahlen");
-        }
-
-        order.setStatus(OrderStatus.PAID);
-        order.setPaidAt(LocalDateTime.now());
+        currentState(order).pay(order);
         return KitOrderResponse.from(kitOrderRepository.save(order));
     }
 
     public KitOrderResponse pack(Long orderId) {
         KitOrder order = findOrder(orderId);
-        if (order.getStatus() != OrderStatus.PAID) {
-            throw new InvalidOrderStateTransitionException(order.getId(), order.getStatus(), "verpacken");
-        }
-
-        order.setStatus(OrderStatus.PACKED);
-        order.setPackedAt(LocalDateTime.now());
+        currentState(order).pack(order);
         return KitOrderResponse.from(kitOrderRepository.save(order));
     }
 
     public KitOrderResponse ship(Long orderId, ShipOrderRequest request) {
         KitOrder order = findOrder(orderId);
-        if (order.getStatus() != OrderStatus.PACKED) {
-            throw new InvalidOrderStateTransitionException(order.getId(), order.getStatus(), "versenden");
-        }
-
-        order.setStatus(OrderStatus.SHIPPED);
-        order.setTrackingNumber(requireText(request.trackingNumber(), "trackingNumber"));
-        order.setShippedAt(LocalDateTime.now());
+        currentState(order).ship(order, request.trackingNumber());
         return KitOrderResponse.from(kitOrderRepository.save(order));
     }
 
     public KitOrderResponse cancel(Long orderId, ReasonRequest request) {
         KitOrder order = findOrder(orderId);
-
-        if (order.getStatus() != OrderStatus.CREATED
-                && order.getStatus() != OrderStatus.PAID
-                && order.getStatus() != OrderStatus.PACKED) {
-            throw new InvalidOrderStateTransitionException(order.getId(), order.getStatus(), "stornieren");
-        }
-
-        order.setStatus(OrderStatus.CANCELLED);
-        order.setCancellationReason(requireText(request.reason(), "reason"));
-        order.setCancelledAt(LocalDateTime.now());
+        currentState(order).cancel(order, request.reason());
         return KitOrderResponse.from(kitOrderRepository.save(order));
     }
 
     public KitOrderResponse returnOrder(Long orderId, ReasonRequest request) {
         KitOrder order = findOrder(orderId);
-
-        if (order.getStatus() != OrderStatus.SHIPPED) {
-            throw new InvalidOrderStateTransitionException(order.getId(), order.getStatus(), "retournieren");
-        }
-
-        order.setStatus(OrderStatus.RETURNED);
-        order.setReturnReason(requireText(request.reason(), "reason"));
-        order.setReturnedAt(LocalDateTime.now());
+        currentState(order).returnOrder(order, request.reason());
         return KitOrderResponse.from(kitOrderRepository.save(order));
     }
 
@@ -132,10 +101,7 @@ public class KitOrderService {
                 .orElseThrow(() -> new OrderNotFoundException(orderId));
     }
 
-    private String requireText(String value, String fieldName) {
-        if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException(fieldName + " darf nicht leer sein.");
-        }
-        return value.trim();
+    private OrderState currentState(KitOrder order) {
+        return orderStateFactory.getState(order.getStatus());
     }
 }
