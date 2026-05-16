@@ -1,0 +1,51 @@
+### Neue Bestellung anlegen
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+
+{
+  "customerName": "Chris Muster",
+  "customerEmail": "chris@example.com",
+  "shippingAddress": "Musterstraße 12, 8020 Graz",
+  "kitName": "AC Milan 2007 Home",
+  "quantity": 2,
+  "unitPrice": 89.99
+}
+
+### Alle Bestellungen abrufen
+GET http://localhost:8080/api/orders
+
+### Einzelne Bestellung abrufen
+GET http://localhost:8080/api/orders/1
+
+### Bestellung bezahlen
+POST http://localhost:8080/api/orders/1/pay
+
+### Bestellung verpacken
+POST http://localhost:8080/api/orders/1/pack
+
+### Bestellung versenden
+POST http://localhost:8080/api/orders/1/ship
+Content-Type: application/json
+
+{
+  "trackingNumber": "TRACK-2026-001"
+}
+
+### Bestellung stornieren
+POST http://localhost:8080/api/orders/1/cancel
+Content-Type: application/json
+
+{
+  "reason": "Kunde hat sich umentschieden"
+}
+
+### Bestellung retournieren
+POST http://localhost:8080/api/orders/1/return
+Content-Type: application/json
+
+{
+  "reason": "Größe passt nicht"
+}
+
+### Bestellungen nach Status abrufen
+GET http://localhost:8080/api/orders/status/SHIPPED
