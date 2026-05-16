@@ -6,6 +6,10 @@ import java.time.LocalDateTime;
 import at.itkolleg.statepattern.order.model.KitOrder;
 import at.itkolleg.statepattern.order.model.OrderStatus;
 
+/**
+ * Response-DTO der REST-API.
+ * Die statische Fabrikmethode kapselt das Mapping von Entity zu API-Antwort.
+ */
 public record KitOrderResponse(
         Long id,
         String customerName,
@@ -29,6 +33,7 @@ public record KitOrderResponse(
 ) {
 
     public static KitOrderResponse from(KitOrder order) {
+        // Einheitliches Mapping verhindert, dass Controller direkt mit Entity-Strukturen arbeiten.
         return new KitOrderResponse(
                 order.getId(),
                 order.getCustomerName(),

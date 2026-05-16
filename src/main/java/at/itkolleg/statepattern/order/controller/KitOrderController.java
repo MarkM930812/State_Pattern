@@ -20,6 +20,10 @@ import at.itkolleg.statepattern.order.model.OrderStatus;
 import at.itkolleg.statepattern.order.service.KitOrderService;
 import jakarta.validation.Valid;
 
+/**
+ * Stellt die REST-Schnittstelle für Bestellungen bereit.
+ * Die eigentliche Fachlogik bleibt bewusst im Service.
+ */
 @RestController
 @RequestMapping("/api/orders")
 @CrossOrigin(origins = "*")

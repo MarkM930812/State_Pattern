@@ -1,0 +1,75 @@
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by org.fusesource.jansi.internal.JansiLoader in an unnamed module (file:/home/chris/.m2/wrapper/dists/apache-maven-3.8.7/94bb59d1/lib/jansi-2.4.0.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/home/chris/.m2/wrapper/dists/apache-maven-3.8.7/94bb59d1/lib/guava-25.1-android.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+10:26:14.942 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [at.itkolleg.statepattern.order.KitOrderControllerIntegrationTest]: KitOrderControllerIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+10:26:15.009 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration at.itkolleg.statepattern.StatePatternKitOrdersApplication for test class at.itkolleg.statepattern.order.KitOrderControllerIntegrationTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.5)
+
+2026-05-16T10:26:15.277+02:00  INFO 751554 --- [           main] .i.s.o.KitOrderControllerIntegrationTest : Starting KitOrderControllerIntegrationTest using Java 24.0.2 with PID 751554 (started by chris in /home/chris/Documents/IT-Kolleg-Projekte/6_SS2026_KIF-GRZ-2409_4AKIF/6.09_SYP/Übungen/state_pattern_kit_orders)
+2026-05-16T10:26:15.278+02:00  INFO 751554 --- [           main] .i.s.o.KitOrderControllerIntegrationTest : No active profile set, falling back to 1 default profile: "default"
+2026-05-16T10:26:15.607+02:00  INFO 751554 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-16T10:26:15.634+02:00  INFO 751554 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 23 ms. Found 1 JPA repository interface.
+2026-05-16T10:26:15.930+02:00  INFO 751554 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-16T10:26:15.969+02:00  INFO 751554 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2026-05-16T10:26:16.001+02:00  INFO 751554 --- [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-05-16T10:26:16.222+02:00  INFO 751554 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-16T10:26:16.239+02:00  INFO 751554 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-16T10:26:16.342+02:00  INFO 751554 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:kitorders-test user=SA
+2026-05-16T10:26:16.343+02:00  INFO 751554 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-05-16T10:26:16.872+02:00  INFO 751554 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-16T10:26:16.895+02:00  INFO 751554 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/home/chris/.m2/repository/org/apache/tomcat/embed/tomcat-embed-core/10.1.31/tomcat-embed-core-10.1.31.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+2026-05-16T10:26:17.427+02:00  WARN 751554 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-16T10:26:17.906+02:00  INFO 751554 --- [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-16T10:26:17.907+02:00  INFO 751554 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-16T10:26:17.909+02:00  INFO 751554 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2026-05-16T10:26:17.937+02:00  INFO 751554 --- [           main] .i.s.o.KitOrderControllerIntegrationTest : Started KitOrderControllerIntegrationTest in 2.789 seconds (process running for 3.383)
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+WARNING: A Java agent has been loaded dynamically (/home/chris/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.19/byte-buddy-agent-1.14.19.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+2026-05-16T10:26:18.822+02:00  INFO 751554 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [at.itkolleg.statepattern.StatePatternKitOrdersApplicationTests]: StatePatternKitOrdersApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-05-16T10:26:18.826+02:00  INFO 751554 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration at.itkolleg.statepattern.StatePatternKitOrdersApplication for test class at.itkolleg.statepattern.StatePatternKitOrdersApplicationTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.5)
+
+2026-05-16T10:26:18.847+02:00  INFO 751554 --- [           main] .s.StatePatternKitOrdersApplicationTests : Starting StatePatternKitOrdersApplicationTests using Java 24.0.2 with PID 751554 (started by chris in /home/chris/Documents/IT-Kolleg-Projekte/6_SS2026_KIF-GRZ-2409_4AKIF/6.09_SYP/Übungen/state_pattern_kit_orders)
+2026-05-16T10:26:18.848+02:00  INFO 751554 --- [           main] .s.StatePatternKitOrdersApplicationTests : No active profile set, falling back to 1 default profile: "default"
+2026-05-16T10:26:19.053+02:00  INFO 751554 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-16T10:26:19.063+02:00  INFO 751554 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 9 ms. Found 1 JPA repository interface.
+2026-05-16T10:26:19.184+02:00  INFO 751554 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-16T10:26:19.187+02:00  INFO 751554 --- [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-05-16T10:26:19.201+02:00  INFO 751554 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-16T10:26:19.202+02:00  INFO 751554 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2026-05-16T10:26:19.204+02:00  INFO 751554 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection conn10: url=jdbc:h2:mem:kitorders-test user=SA
+2026-05-16T10:26:19.205+02:00  INFO 751554 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2026-05-16T10:26:19.317+02:00  INFO 751554 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-16T10:26:19.321+02:00  INFO 751554 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-16T10:26:19.394+02:00  WARN 751554 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-16T10:26:19.475+02:00  INFO 751554 --- [           main] .s.StatePatternKitOrdersApplicationTests : Started StatePatternKitOrdersApplicationTests in 0.646 seconds (process running for 4.922)

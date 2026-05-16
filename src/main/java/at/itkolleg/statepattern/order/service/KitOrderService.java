@@ -18,6 +18,10 @@ import at.itkolleg.statepattern.order.model.KitOrder;
 import at.itkolleg.statepattern.order.model.OrderStatus;
 import at.itkolleg.statepattern.order.repository.KitOrderRepository;
 
+/**
+ * Zentrale Fachklasse des without-pattern-Branches.
+ * Alle Statuswechsel werden hier noch direkt mit Fallunterscheidungen geprüft.
+ */
 @Service
 @Transactional
 public class KitOrderService {
@@ -67,6 +71,7 @@ public class KitOrderService {
 
     public KitOrderResponse pay(Long orderId) {
         KitOrder order = findOrder(orderId);
+        // without-pattern: Die Regel ist direkt im Service verankert.
         if (order.getStatus() != OrderStatus.CREATED) {
             throw new InvalidOrderStateTransitionException(order.getId(), order.getStatus(), "bezahlen");
         }
@@ -78,6 +83,7 @@ public class KitOrderService {
 
     public KitOrderResponse pack(Long orderId) {
         KitOrder order = findOrder(orderId);
+        // Jeder neue Status erhöht hier die Zahl der zentralen Prüfungen.
         if (order.getStatus() != OrderStatus.PAID) {
             throw new InvalidOrderStateTransitionException(order.getId(), order.getStatus(), "verpacken");
         }
@@ -102,6 +108,7 @@ public class KitOrderService {
     public KitOrderResponse cancel(Long orderId, ReasonRequest request) {
         KitOrder order = findOrder(orderId);
 
+        // Mehrfachbedingungen zeigen, warum diese Lösung bei Erweiterungen unhandlich wird.
         if (order.getStatus() != OrderStatus.CREATED
                 && order.getStatus() != OrderStatus.PAID
                 && order.getStatus() != OrderStatus.PACKED) {

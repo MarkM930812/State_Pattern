@@ -24,6 +24,10 @@ import at.itkolleg.statepattern.order.dto.ReasonRequest;
 import at.itkolleg.statepattern.order.dto.ShipOrderRequest;
 import at.itkolleg.statepattern.order.repository.KitOrderRepository;
 
+/**
+ * Integrationstests für die REST-Endpunkte des without-pattern-Branches.
+ * Die Tests prüfen die gesamte Kette aus Controller, Service, Repository und Fehlerbehandlung.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 class KitOrderControllerIntegrationTest {
@@ -38,6 +42,7 @@ class KitOrderControllerIntegrationTest {
 
     @BeforeEach
     void setUp() {
+                // Jeder Test startet mit einer leeren In-Memory-Datenbank.
         kitOrderRepository.deleteAll();
     }
 
@@ -167,6 +172,7 @@ class KitOrderControllerIntegrationTest {
     }
 
     private Long createPreparedOrder() throws Exception {
+                // Hilfsmethode für Tests, die einen weiter fortgeschrittenen Status benötigen.
         Long orderId = createOrder();
         mockMvc.perform(post("/api/orders/{orderId}/pay", orderId))
                 .andExpect(status().isOk());
